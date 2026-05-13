@@ -26,7 +26,7 @@ As a Minimum Viable Product (MVP), the current system relies on generic drug nam
 2. User authentication and real-time Electronic Health Record (EHR) integration.
 
 ## 💻 How to Use
-1. Open the [Live Demo](https://yacoup120-sketch.github.io/GuidelineGo/).
+1. Open the [Live Demo][(https://yacoup120-sketch.github.io/GuidelineGo/).](https://yacoup120-sketch.github.io/GuideLineGo/)
 2. Upon first launch, enter your **Groq API Key**.
 3. Select a Quick Prompt from the bottom menu or type a custom clinical scenario.
 4. Click **Print Patient Schedule** to generate a clean, printable clinical report.
