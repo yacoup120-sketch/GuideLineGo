@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GuidelineGo | MedPharm Support System</title>
+    <!-- استدعاء مكتبة رسم الجداول والماركداون -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root { --primary: #0369a1; --secondary: #0f172a; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; --pharm: #0d9488; }
         body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
@@ -35,11 +37,17 @@
 
         /* Chat Area */
         .chat-box { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: #f1f5f9; }
-        .message { max-width: 75%; padding: 18px 22px; border-radius: 14px; font-size: 14.5px; line-height: 1.7; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .message { max-width: 80%; padding: 18px 22px; border-radius: 14px; font-size: 14.5px; line-height: 1.7; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .ai-message { background: var(--white); border: 1px solid #e2e8f0; align-self: flex-start; border-top-left-radius: 2px; }
         .ai-message::before { content: 'MedPharm AI'; position: absolute; top: -20px; left: 0; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.5px; }
         .user-message { background: var(--primary); color: white; align-self: flex-end; border-top-right-radius: 2px; }
         .user-message::before { content: 'Healthcare Provider'; position: absolute; top: -20px; right: 0; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.5px; }
+        
+        /* Table Styles for AI Output */
+        .message table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; font-size: 13.5px; background: white; border-radius: 8px; overflow: hidden; }
+        .message th, .message td { border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; }
+        .message th { background-color: var(--primary); color: white; font-weight: 600; }
+        .message tr:nth-child(even) { background-color: #f8fafc; }
         
         /* Input & Controls */
         .controls-container { background: var(--white); border-top: 1px solid #e2e8f0; padding-bottom: 10px; }
@@ -54,13 +62,13 @@
         .input-wrapper button { background: var(--primary); color: white; border: none; padding: 0 30px; border-radius: 30px; cursor: pointer; font-weight: 700; transition: 0.3s; }
         .input-wrapper button:hover { background: #0284c7; }
         .med-footer { text-align: center; font-size: 10px; color: #94a3b8; padding-bottom: 5px; font-weight: 500; }
-        b { color: var(--primary); }
 
         @media print {
             .sidebar, .controls-container, .top-actions { display: none !important; }
             body { background: white; }
             .message { box-shadow: none; border: 1px solid #ccc; max-width: 100%; color: black; margin-bottom: 20px; }
-            .ai-message::before { content: 'Official Unified Medical & Pharmacy Report'; color: #000; font-size: 14px; }
+            .ai-message::before { content: 'Official Unified Medical & Pharmacy Report - Patient Copy'; color: #000; font-size: 14px; }
+            .message table th { background-color: #e2e8f0 !important; color: black !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -72,16 +80,14 @@
             <p>Unified MedPharm System</p>
         </div>
         <div class="menu">
-            <!-- Medical Section -->
             <div class="menu-title">Medical Pathways (MD)</div>
             <div class="menu-item med active">🩺 Hypertension Protocol</div>
             <div class="menu-item med">🩺 Asthma / COPD (GINA)</div>
             
-            <!-- Pharmacy Section -->
             <div class="menu-title">Pharmacy Workspace (PharmD)</div>
             <div class="menu-item pharm">💊 OTC Triage & Diagnosis</div>
             <div class="menu-item pharm">🔄 Substitution (Jordan)</div>
-            <div class="menu-item pharm">⚠️ Drug Interaction Check</div>
+            <div class="menu-item pharm">📅 Patient Scheduling</div>
         </div>
     </div>
 
@@ -92,7 +98,7 @@
                 Provider Station: <b>Physician & Pharmacist Dual Mode</b>
             </div>
             <div class="top-actions">
-                <button class="btn-action btn-export" onclick="window.print()">📄 Print Clinical Report</button>
+                <button class="btn-action btn-export" onclick="window.print()">📄 Print Patient Schedule</button>
                 <button class="btn-action" onclick="resetApiKey()">🔑 API Config</button>
             </div>
         </div>
@@ -101,21 +107,18 @@
             <div class="message ai-message">
                 System Initialized. Welcome to the <b>Unified MedPharm Support System</b>.<br><br>
                 - <b>For Physicians:</b> Enter patient vitals for protocol guidance.<br>
-                - <b>For Pharmacists:</b> Enter OTC symptoms, interaction checks, or request local Jordanian alternatives.
+                - <b>For Pharmacists:</b> Enter OTC symptoms, interaction checks, or request a Patient Medication Schedule.
             </div>
         </div>
 
         <div class="controls-container">
             <div class="quick-access">
-                <!-- Medical Prompts -->
-                <button class="q-pill q-med" onclick="sendQuick('Patient has 160/95 BP. What is the JSH protocol?')">🩺 MD: BP Guideline</button>
-                <!-- Pharmacy Prompts -->
-                <button class="q-pill q-pharm" onclick="sendQuick('OTC Triage: 30yo with dry cough and sore throat for 2 days. No fever.')">💊 Pharm: OTC Dry Cough</button>
-                <button class="q-pill q-pharm" onclick="sendQuick('Check Interaction: Warfarin + Aspirin')">⚠️ Pharm: DDI Check</button>
-                <button class="q-pill q-pharm" onclick="sendQuick('Jordanian alternative for Panadol Cold & Flu?')">🔄 Pharm: Local Alternative</button>
+                <button class="q-pill q-pharm" onclick="sendQuick('OTC Triage: Patient has a wet productive cough with yellow phlegm for 4 days. Suggest exact Jordanian trade names and a schedule table.')">💊 Pharm: Wet Cough (Full Schedule)</button>
+                <button class="q-pill q-med" onclick="sendQuick('Patient has 160/95 BP. Suggest treatment with exact Jordanian commercial names and provide a schedule table.')">🩺 MD: BP Guideline (Table)</button>
+                <button class="q-pill q-pharm" onclick="sendQuick('Jordanian commercial alternatives for Panadol Cold & Flu?')">🔄 Pharm: Local Alternative</button>
             </div>
             <div class="input-wrapper">
-                <input type="text" id="user-input" placeholder="Type a clinical protocol query or an OTC patient case...">
+                <input type="text" id="user-input" placeholder="Type a clinical case, and ask for a medication table...">
                 <button id="send-btn">Process</button>
             </div>
             <div class="med-footer">
@@ -136,8 +139,13 @@
             location.reload();
         }
 
-        // الذكاء الاصطناعي المزدوج: طبيب وصيدلاني
-        const systemInstruction = "You are a comprehensive Clinical & Pharmacy Decision Support System (CDSS) operating in Jordan. You assist BOTH Physicians and Pharmacists. If the user asks about clinical guidelines (like Hypertension), act as a medical CDSS using decision trees (Ask one question at a time). If the user asks about OTC diagnosis/triage, drug interactions, or substitutions, act as a Senior Clinical Pharmacist conducting patient triage. Always suggest Jordanian commercial brands (e.g., Hikma, JPM, Dar Al Dawa, MS Pharma) when dispensing. Be highly professional, concise, and structured.";
+        // الذكاء الاصطناعي صارم جداً بخصوص الأسماء التجارية والجداول
+        const systemInstruction = `You are a comprehensive Clinical & Pharmacy Decision Support System (CDSS) operating in Jordan. 
+        RULES:
+        1. If diagnosing/triage, ask ONE logical question at a time.
+        2. EXACT TRADE NAMES: When dispensing or suggesting treatments, you MUST provide SPECIFIC Jordanian commercial drug names (e.g., "Amoclan", "Panda", "Rhinofed", "Angiotec", "Joswe Enal"), DO NOT just output the manufacturer name (like "Hikma" or "Dar Al Dawa").
+        3. DOSAGES: Always provide precise dosages and duration.
+        4. PATIENT SCHEDULE TABLE: At the end of every final treatment recommendation, YOU MUST output a clear Markdown Table titled "Patient Medication Schedule" with these columns: [Commercial Drug Name | Dose | Frequency | Timing / Instructions]. This table is for the pharmacist to print for the patient.`;
         
         let chatHistory = [{ "role": "system", "content": systemInstruction }];
 
@@ -172,6 +180,7 @@
                 const data = await response.json();
                 document.getElementById(loadingId).remove();
                 const aiReply = data.choices[0].message.content;
+                
                 addMessage('ai', aiReply);
                 chatHistory.push({ "role": "assistant", "content": aiReply });
             } catch (e) {
@@ -180,12 +189,20 @@
             }
         }
 
+        // تم استخدام مكتبة marked.js عشان تحول الجداول والخط العريض لشكل مرتب
         function addMessage(sender, text, id = null) {
             const chatBox = document.getElementById('chat-box');
             const div = document.createElement('div');
             div.className = `message ${sender}-message`;
             if (id) div.id = id;
-            div.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            
+            // إذا كانت رسالة المستخدم بنعرضها عادي، إذا من الـ AI بنستخدم marked.js لترتيب الجدول
+            if(sender === 'user' || text.includes('<i>Processing')) {
+                 div.innerHTML = text;
+            } else {
+                 div.innerHTML = marked.parse(text);
+            }
+            
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
