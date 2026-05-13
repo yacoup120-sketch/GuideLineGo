@@ -3,65 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GuidelineGo | Clinical Decision Support</title>
+    <title>GuidelineGo | MedPharm Support System</title>
     <style>
-        :root { --primary: #0f766e; --secondary: #1e293b; --bg: #f1f5f9; --white: #ffffff; --text: #334155; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+        :root { --primary: #0369a1; --secondary: #0f172a; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; --pharm: #0d9488; }
+        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
         
-        /* Sidebar Styles */
-        .sidebar { width: 280px; background-color: var(--secondary); color: var(--white); display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 10; }
-        .logo-area { padding: 25px 20px; background-color: #0f172a; border-bottom: 1px solid #334155; text-align: center; }
-        .logo-area h2 { margin: 0; font-size: 24px; color: #14b8a6; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .logo-area p { margin: 5px 0 0; font-size: 12px; color: #94a3b8; }
-        .menu { flex: 1; padding: 20px; }
-        .menu-title { font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 1px; margin-bottom: 15px; font-weight: bold; }
-        .menu-item { padding: 12px 15px; margin-bottom: 8px; background: #334155; border-radius: 8px; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; border-left: 4px solid transparent; }
-        .menu-item.active { background: #1e293b; border-left-color: #14b8a6; font-weight: bold; }
+        /* Sidebar Dashboard */
+        .sidebar { width: 300px; background-color: var(--secondary); color: var(--white); display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 10; }
+        .logo-area { padding: 25px 20px; background-color: #020617; border-bottom: 1px solid #1e293b; text-align: center; }
+        .logo-area h2 { margin: 0; font-size: 22px; color: #38bdf8; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; }
+        .logo-area p { margin: 5px 0 0; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .menu { flex: 1; padding: 20px 15px; overflow-y: auto; }
         
-        /* Main Panel Styles */
-        .main-panel { flex: 1; display: flex; flex-direction: column; position: relative; background: var(--bg); }
-        .top-bar { height: 70px; background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; z-index: 5; }
-        .patient-status { display: flex; gap: 15px; align-items: center; }
-        .status-badge { background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .menu-title { font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 1px; margin: 20px 0 10px 5px; font-weight: 800; }
+        .menu-item { padding: 12px 15px; margin-bottom: 6px; background: #1e293b; border-radius: 10px; font-size: 13px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; border-left: 3px solid transparent; }
+        .menu-item.med { border-left-color: #0284c7; }
+        .menu-item.med:hover { background: #0c4a6e; }
+        .menu-item.pharm { border-left-color: #0d9488; }
+        .menu-item.pharm:hover { background: #134e4a; }
+        .menu-item.active { background: #334155; font-weight: bold; }
+        
+        /* Main Workspace */
+        .main-panel { flex: 1; display: flex; flex-direction: column; position: relative; }
+        .top-bar { height: 70px; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; z-index: 5; }
+        .system-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #475569; }
+        .badge-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; }
         .top-actions { display: flex; gap: 10px; }
-        .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #475569; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
-        .btn-outline:hover { background: #f1f5f9; color: #0f172a; }
-        .btn-print { border-color: #14b8a6; color: #0f766e; }
-        .btn-print:hover { background: #ccfbf1; color: #0f766e; }
+        .btn-action { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-action:hover { background: #e2e8f0; color: #0f172a; }
+        .btn-export { border-color: #0369a1; color: #0369a1; }
 
         /* Chat Area */
-        .chat-box { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: url('https://www.transparenttextures.com/patterns/cubes.png') var(--bg); }
-        .message { max-width: 75%; padding: 18px 24px; border-radius: 12px; font-size: 15px; line-height: 1.7; box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; }
-        .ai-message { background: var(--white); border: 1px solid #e2e8f0; align-self: flex-start; border-top-left-radius: 0; }
-        .ai-message::before { content: 'GuidelineGo AI'; position: absolute; top: -20px; left: 0; font-size: 11px; color: #64748b; font-weight: bold; }
-        .user-message { background: var(--primary); color: white; align-self: flex-end; border-top-right-radius: 0; }
-        .user-message::before { content: 'Pharmacist'; position: absolute; top: -20px; right: 0; font-size: 11px; color: #64748b; font-weight: bold; }
+        .chat-box { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: #f1f5f9; }
+        .message { max-width: 75%; padding: 18px 22px; border-radius: 14px; font-size: 14.5px; line-height: 1.7; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .ai-message { background: var(--white); border: 1px solid #e2e8f0; align-self: flex-start; border-top-left-radius: 2px; }
+        .ai-message::before { content: 'MedPharm AI'; position: absolute; top: -20px; left: 0; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.5px; }
+        .user-message { background: var(--primary); color: white; align-self: flex-end; border-top-right-radius: 2px; }
+        .user-message::before { content: 'Healthcare Provider'; position: absolute; top: -20px; right: 0; font-size: 10px; color: #64748b; font-weight: 800; letter-spacing: 0.5px; }
         
-        /* Bottom Area & Input */
-        .bottom-container { background: var(--white); border-top: 1px solid #e2e8f0; display: flex; flex-direction: column; }
-        .quick-prompts { display: flex; gap: 10px; padding: 15px 30px 0; overflow-x: auto; }
-        .quick-btn { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: 0.2s; white-space: nowrap; font-weight: 500; }
-        .quick-btn:hover { background: #e2e8f0; color: #0f172a; border-color: #cbd5e1; }
-        .input-area { padding: 15px 30px; display: flex; gap: 15px; align-items: center; }
-        .input-area input { flex: 1; padding: 15px 25px; border: 2px solid #e2e8f0; border-radius: 30px; font-size: 15px; outline: none; transition: 0.3s; background: #f8fafc; }
-        .input-area input:focus { border-color: var(--primary); background: white; }
-        .input-area button { background: var(--primary); color: white; border: none; padding: 15px 35px; border-radius: 30px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 10px rgba(15, 118, 110, 0.2); }
-        .input-area button:hover { background: #115e59; transform: translateY(-2px); }
-        .disclaimer { text-align: center; padding-bottom: 12px; font-size: 11px; color: #94a3b8; }
+        /* Input & Controls */
+        .controls-container { background: var(--white); border-top: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .quick-access { display: flex; gap: 10px; padding: 15px 30px 10px; overflow-x: auto; }
+        .q-pill { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 7px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; font-weight: 600; transition: 0.2s; }
+        .q-pill.q-med:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .q-pill.q-pharm:hover { background: var(--pharm); color: white; border-color: var(--pharm); }
+        
+        .input-wrapper { padding: 10px 30px 15px; display: flex; gap: 15px; }
+        .input-wrapper input { flex: 1; padding: 15px 25px; border: 2px solid #e2e8f0; border-radius: 30px; font-size: 14.5px; outline: none; background: #f8fafc; transition: 0.3s; }
+        .input-wrapper input:focus { border-color: var(--primary); background: white; }
+        .input-wrapper button { background: var(--primary); color: white; border: none; padding: 0 30px; border-radius: 30px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .input-wrapper button:hover { background: #0284c7; }
+        .med-footer { text-align: center; font-size: 10px; color: #94a3b8; padding-bottom: 5px; font-weight: 500; }
         b { color: var(--primary); }
 
-        /* Print Styles for EHR Export */
         @media print {
-            body { height: auto; overflow: visible; background: white; }
-            .sidebar, .bottom-container, .top-actions { display: none !important; }
-            .main-panel { background: white; }
-            .top-bar { box-shadow: none; border-bottom: 2px solid #000; padding: 10px 0; justify-content: center; }
-            .chat-box { background: none; padding: 20px 0; overflow: visible; }
-            .message { box-shadow: none; border: 1px solid #ccc; color: black; max-width: 100%; margin-bottom: 25px; page-break-inside: avoid; }
-            .user-message { background: #f3f4f6; color: black; }
-            b { color: #000; }
-            .status-badge { display: none; }
-            .top-bar::after { content: "GuidelineGo CDSS - Official Clinical Report"; font-size: 18px; font-weight: bold; }
+            .sidebar, .controls-container, .top-actions { display: none !important; }
+            body { background: white; }
+            .message { box-shadow: none; border: 1px solid #ccc; max-width: 100%; color: black; margin-bottom: 20px; }
+            .ai-message::before { content: 'Official Unified Medical & Pharmacy Report'; color: #000; font-size: 14px; }
         }
     </style>
 </head>
@@ -70,46 +69,57 @@
     <div class="sidebar">
         <div class="logo-area">
             <h2>⚕️ GuidelineGo</h2>
-            <p>Clinical Decision Support System</p>
+            <p>Unified MedPharm System</p>
         </div>
         <div class="menu">
-            <div class="menu-title">Active Protocols</div>
-            <div class="menu-item active">🩸 Hypertension (JSH)</div>
-            <div class="menu-item">🍬 Diabetes (ADA)</div>
-            <div class="menu-item">🫁 Asthma (GINA)</div>
+            <!-- Medical Section -->
+            <div class="menu-title">Medical Pathways (MD)</div>
+            <div class="menu-item med active">🩺 Hypertension Protocol</div>
+            <div class="menu-item med">🩺 Asthma / COPD (GINA)</div>
+            
+            <!-- Pharmacy Section -->
+            <div class="menu-title">Pharmacy Workspace (PharmD)</div>
+            <div class="menu-item pharm">💊 OTC Triage & Diagnosis</div>
+            <div class="menu-item pharm">🔄 Substitution (Jordan)</div>
+            <div class="menu-item pharm">⚠️ Drug Interaction Check</div>
         </div>
     </div>
 
     <div class="main-panel">
         <div class="top-bar">
-            <div class="patient-status">
-                <span class="status-badge">🟢 System Ready</span>
-                <span class="status-badge" style="background:#fef3c7; color:#d97706;">📍 Region: Jordan</span>
+            <div class="system-badge">
+                <div class="badge-dot"></div>
+                Provider Station: <b>Physician & Pharmacist Dual Mode</b>
             </div>
             <div class="top-actions">
-                <button class="btn-outline btn-print" onclick="window.print()">📄 Export to EHR</button>
-                <button class="btn-outline" onclick="resetApiKey()">🔑 Reset Key</button>
+                <button class="btn-action btn-export" onclick="window.print()">📄 Print Clinical Report</button>
+                <button class="btn-action" onclick="resetApiKey()">🔑 API Config</button>
             </div>
         </div>
 
         <div class="chat-box" id="chat-box">
             <div class="message ai-message">
-                Welcome to <b>GuidelineGo CDSS</b>.<br>I am ready to assist you with the latest clinical guidelines and Jordanian pharmaceutical equivalents. <br><br>Please enter the patient's condition or select a quick prompt below.
+                System Initialized. Welcome to the <b>Unified MedPharm Support System</b>.<br><br>
+                - <b>For Physicians:</b> Enter patient vitals for protocol guidance.<br>
+                - <b>For Pharmacists:</b> Enter OTC symptoms, interaction checks, or request local Jordanian alternatives.
             </div>
         </div>
 
-        <div class="bottom-container">
-            <div class="quick-prompts">
-                <button class="quick-btn" onclick="sendQuickPrompt('55yo patient with Hypertension')">⚡ 55yo, Hypertension</button>
-                <button class="quick-btn" onclick="sendQuickPrompt('Pregnant patient, high blood pressure')">⚡ Pregnant, High BP</button>
-                <button class="quick-btn" onclick="sendQuickPrompt('Hypertension with Chronic Kidney Disease')">⚡ HTN + CKD</button>
+        <div class="controls-container">
+            <div class="quick-access">
+                <!-- Medical Prompts -->
+                <button class="q-pill q-med" onclick="sendQuick('Patient has 160/95 BP. What is the JSH protocol?')">🩺 MD: BP Guideline</button>
+                <!-- Pharmacy Prompts -->
+                <button class="q-pill q-pharm" onclick="sendQuick('OTC Triage: 30yo with dry cough and sore throat for 2 days. No fever.')">💊 Pharm: OTC Dry Cough</button>
+                <button class="q-pill q-pharm" onclick="sendQuick('Check Interaction: Warfarin + Aspirin')">⚠️ Pharm: DDI Check</button>
+                <button class="q-pill q-pharm" onclick="sendQuick('Jordanian alternative for Panadol Cold & Flu?')">🔄 Pharm: Local Alternative</button>
             </div>
-            <div class="input-area">
-                <input type="text" id="user-input" placeholder="Enter patient condition or vitals...">
-                <button id="send-btn">Analyze</button>
+            <div class="input-wrapper">
+                <input type="text" id="user-input" placeholder="Type a clinical protocol query or an OTC patient case...">
+                <button id="send-btn">Process</button>
             </div>
-            <div class="disclaimer">
-                ⚠️ Medical Disclaimer: This is a Clinical Decision Support System. It does not replace the professional judgment of a licensed pharmacist or physician.
+            <div class="med-footer">
+                INTEGRATED HEALTHCARE CDSS | Jordanian Medical & Pharmacy Guidelines (JFDA/JMA/JPA Compatible)
             </div>
         </div>
     </div>
@@ -117,7 +127,7 @@
     <script>
         let apiKey = localStorage.getItem('groq_api_key');
         if (!apiKey) {
-            apiKey = prompt("System Security: Please enter your Groq API Key:");
+            apiKey = prompt("System Security: Enter Groq LLaMA 3 API Key:");
             if (apiKey) localStorage.setItem('groq_api_key', apiKey);
         }
 
@@ -126,23 +136,18 @@
             location.reload();
         }
 
-        const systemInstruction = "You are a professional Clinical Decision Support System (CDSS) for Pharmacists in Jordan. Guide the pharmacist through clinical guidelines (e.g., Hypertension) using a step-by-step 'Decision Tree'. Rules: 1. Ask ONLY ONE logical clinical question at a time. 2. WAIT for the user to answer. 3. Be highly professional and concise. 4. Once a conclusion is reached, suggest Jordanian commercial drug brands (e.g., Hikma, JPM, Dar Al Dawa, MS Pharma).";
+        // الذكاء الاصطناعي المزدوج: طبيب وصيدلاني
+        const systemInstruction = "You are a comprehensive Clinical & Pharmacy Decision Support System (CDSS) operating in Jordan. You assist BOTH Physicians and Pharmacists. If the user asks about clinical guidelines (like Hypertension), act as a medical CDSS using decision trees (Ask one question at a time). If the user asks about OTC diagnosis/triage, drug interactions, or substitutions, act as a Senior Clinical Pharmacist conducting patient triage. Always suggest Jordanian commercial brands (e.g., Hikma, JPM, Dar Al Dawa, MS Pharma) when dispensing. Be highly professional, concise, and structured.";
         
-        let chatHistory = [
-            { "role": "system", "content": systemInstruction }
-        ];
+        let chatHistory = [{ "role": "system", "content": systemInstruction }];
 
-        function sendQuickPrompt(text) {
+        function sendQuick(text) {
             document.getElementById('user-input').value = text;
             startChat();
         }
 
         async function startChat() {
-            if (!apiKey) {
-                addMessage('ai', "Authentication Error: API Key missing.");
-                return;
-            }
-
+            if (!apiKey) return;
             const inputField = document.getElementById('user-input');
             const message = inputField.value.trim();
             if (!message) return;
@@ -152,36 +157,26 @@
             chatHistory.push({ "role": "user", "content": message });
 
             const loadingId = 'loading-' + Date.now();
-            addMessage('ai', '<i>Processing clinical data via LLaMA 3.1...</i>', loadingId);
+            addMessage('ai', '<i>Processing via LLaMA 3.1 Dual-Engine...</i>', loadingId);
 
             try {
                 const response = await fetch(`https://api.groq.com/openai/v1/chat/completions`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
                     body: JSON.stringify({
                         model: "llama-3.1-8b-instant", 
                         messages: chatHistory,
                         temperature: 0.1
                     })
                 });
-                
                 const data = await response.json();
                 document.getElementById(loadingId).remove();
-
-                if (data.error) {
-                    addMessage('ai', "<b>System Error:</b> " + data.error.message);
-                    return;
-                }
-
                 const aiReply = data.choices[0].message.content;
                 addMessage('ai', aiReply);
                 chatHistory.push({ "role": "assistant", "content": aiReply });
             } catch (e) {
                 if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
-                addMessage('ai', "<b>Network Error:</b> Unable to reach clinical database.");
+                addMessage('ai', "System Connection Error.");
             }
         }
 
